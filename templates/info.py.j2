@@ -1,0 +1,3 @@
+{% for host in groups['servers'] %}
+  {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }} = {{ cat.stdout }}
+{% endfor %}

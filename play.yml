@@ -1,0 +1,23 @@
+--- 
+- hosts: all
+  remote_user: finch
+  tasks:
+
+    - name: 'Deleting any file(s) from remote machines.'
+      file: path=/home/finch/serverinfo state=absent
+
+    - name: 'Retrieving & storing temporarily the hostname distribution version.'
+      shell: cat /etc/*release | grep PRETTY_NAME | sed 's/^[^\]\+\=//' 
+      register: cat
+
+    - debug:
+        var: cat.stdout
+
+    - name: 'Creating the file with all the information gathered from the remote machines.'
+      template: src=/Users/finch/Desktop/ansible/server-info/templates/info.py.j2 dest=/home/finch/serverinfo
+
+    - name: 'Copying the file on your host.'
+      fetch: src=/home/finch/serverinfo dest=/Users/finch/Desktop/ansible/server-info/generatedfiles/serverinfo flat=yes
+
+    - name: 'Deleting the generated file from remote machines.'
+      file: path=/home/finch/serverinfo state=absent
